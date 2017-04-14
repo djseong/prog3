@@ -5,17 +5,17 @@
 #include "heap.c" 
 
 // read input file and store numbers into nums
-int* readFile(char* filename, int d) {
+long long* readFile(char* filename, int d) {
   FILE* f; 
   f = fopen(filename, "r"); 
   if (f == NULL) {
     printf("error opening file\n"); 
     exit(-1); 
   }
-  int* nums = malloc(sizeof(int) * d); 
+  long long* nums = malloc(sizeof(long long) * d); 
   int i;
   for (i = 0; i < d; i++) {
-    fscanf(f, "%d\n", &nums[i]); 
+    fscanf(f, "%lli\n", &nums[i]); 
   }
   fclose(f); 
   return nums; 
@@ -23,24 +23,54 @@ int* readFile(char* filename, int d) {
 
 // generate random integers and write to file
 void writeFile(int d, char* filename) {
-  int array[3] = {0,1,2}; 
   FILE* f; 
   f = fopen(filename, "w"); 
   if (f == NULL) {
     printf("error writing to file\n"); 
     exit(-1); 
   }
-  int num; 
+  long long num; 
   int i; 
-  int c = d*d*2; 
-  for (i = 0; i<c; i++) {
-    num = rand() % 3; 
-    fprintf(f, "%d\n", array[num]); 
+  for (i = 0; i<d; i++) {
+    //num = rand() % 1000000000000; 
+    num = rand() % 10; 
+    fprintf(f, "%lli\n", num); 
   }
   fclose(f); 
 }
 
-int karp(struct minHeap* heap, int size) {
+int* randomSol(int n) {
+  int* num = malloc(sizeof(int) * n); 
+  int i; 
+  for (i = 0; i < n; i++) {
+    num[i] = rand() % n; 
+  }
+  return num; 
+}
+
+void swapArray(int* array, int i, int j) {
+  int temp = array[i];
+  array[i] = array[j];
+  array[j] = temp;
+}
+// randomly choose two indices i and j and swap those positions in P array
+int* randomMove(int* array_P, int size) {
+  int random_index1 = rand() % size;
+
+  int random_index2 = rand() % size;
+  while (random_index2 == random_index1) {
+    random_index2 = rand() % size;
+  }
+
+  int* swapped_elements = malloc(sizeof(int) * 2);
+  swapped_elements[0] = random_index1;
+  swapped_elements[1] = random_index2;
+  swapArray(array_P, random_index1, random_index2);
+  return swapped_elements;
+}
+
+long long karp(struct minHeap* heap, int size) {
+  buildHeap(heap, size);
   while (heap->size > 1) {
     struct heapNode* firstMax = heapDeleteMin(heap); 
     int newMax = firstMax->value - heap->array[0]->value; 
@@ -50,18 +80,3 @@ int karp(struct minHeap* heap, int size) {
   return heap->array[0]->value; 
 }
 
-int main() {
-  int size = 5; 
-  int* input = readFile("input.txt", size); 
-  int i; 
-  for (i = 0; i<size; i++){
-    printf("%d\n", input[i]); 
-  }
-  struct minHeap* heap = createMinHeap(size);
-  initializeMinHeap(heap, input, size); 
-  buildHeap(heap, size);
-  printf("built:\n"); 
-  printHeap(heap); 
-  printf("running karp:\n"); 
-  printf("result: %d\n", karp(heap, size)); 
-}
