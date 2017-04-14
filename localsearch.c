@@ -26,20 +26,21 @@ int* repeatedRandomLocalSearch(long long* array_A, int size, int max_iteration) 
 
 	  initializeMinHeap(heap, newinput, size); 
 		long long prior_residue = karp(heap, size);
-
 		int* swapped_elements = randomMove(random_solution, size);
 		for (j = 0; j<size; j++){
 	    newinput[random_solution[j]] += array_A[j]; 
 	  }
 		initializeMinHeap(heap, newinput, size); 
 		long long new_residue = karp(heap, size);
-
 		if (new_residue < prior_residue) {
 			swapArray(random_solution, swapped_elements[0], swapped_elements[1]);
 		}
 	}
 
-	free()
+	freeHeap(heap);
+	// fflush(stdout);
+	free(newinput);
+
 	return random_solution;
 }
 
@@ -51,14 +52,22 @@ int main() {
   
   int* solution = repeatedRandomLocalSearch(input, size, 10);
 
+
   struct minHeap* heap = createMinHeap(size);
   long long* newinput = calloc(1, sizeof(long long) * size); 
 	int j;
 	for (j = 0; j<size; j++){
-    newinput[solution[j]] += input[j]; 
+    newinput[solution[j]] += input[j];
+
   }
 	initializeMinHeap(heap, newinput, size); 
 
-  karp(heap, size);
+  long long final_residue = karp(heap, size);
 
+  printf("The final residue was %lli", final_residue);
+
+  free(input);
+  free(newinput);
+  free(solution);
+  freeHeap(heap);
 }

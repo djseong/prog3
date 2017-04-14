@@ -18,14 +18,6 @@ struct minHeap {
   struct heapNode **array; 
 };
 
-void freeHeap(struct minHeap* h) {
-  int i;
-  for (i = 0; i < h->capacity; i++) {
-    free(h->array[i]);
-  } 
-  free(h->array); 
-}
-
 // Debugging function to print heap
 void printHeap(struct minHeap* h) {
   int i; 
@@ -36,6 +28,15 @@ void printHeap(struct minHeap* h) {
     printf("vertex %d value %d\n", h->array[i]->vertex, p); 
   }
   printf("size: %d\n", h->size); 
+}
+
+void freeHeap(struct minHeap* h) {
+  int i;
+  fflush(stdout);
+  for (i = 0; i < h->size; i++) {
+    free(h->array[i]);
+  } 
+  free(h->array); 
 }
 
 // Create min heap node
@@ -58,10 +59,12 @@ struct minHeap* createMinHeap(int capacity) {
 // Put first vertex into heap
 void initializeMinHeap(struct minHeap* h, long long* input, int size) {
   int i; 
+  h->size = 0;
   for (i = 0; i < size; i++) {
     if (h->array[i]) {
       free(h->array[i]);
     }
+    printf("hello\n");
     h->array[i] = createMinNode(i, input[i]); 
     h->size++; 
   }

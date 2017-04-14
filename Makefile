@@ -1,2 +1,3 @@
-karp: karp.c
-	gcc karp.c -o karp -lm -g
+localsearch: localsearch.c
+	gcc localsearch.c -o localsearch -lm -g
+
