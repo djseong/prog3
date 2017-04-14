@@ -23,19 +23,17 @@ int* readFile(char* filename, int d) {
 
 // generate random integers and write to file
 void writeFile(int d, char* filename) {
-  int array[3] = {0,1,2}; 
   FILE* f; 
   f = fopen(filename, "w"); 
   if (f == NULL) {
     printf("error writing to file\n"); 
     exit(-1); 
   }
-  int num; 
+  long long num; 
   int i; 
-  int c = d*d*2; 
-  for (i = 0; i<c; i++) {
-    num = rand() % 3; 
-    fprintf(f, "%d\n", array[num]); 
+  for (i = 0; i<d; i++) {
+    num = rand() % 1000000000000; 
+    fprintf(f, "%lli\n", num); 
   }
   fclose(f); 
 }
@@ -51,8 +49,10 @@ int karp(struct minHeap* heap, int size) {
 }
 
 int main() {
-  int size = 5; 
-  int* input = readFile("input.txt", size); 
+  srand(time(NULL));
+  int size = 100;
+  writeFile(size, "input2.txt");
+  int* input = readFile("input2.txt", size); 
   int i; 
   for (i = 0; i<size; i++){
     printf("%d\n", input[i]); 

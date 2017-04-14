@@ -6,7 +6,7 @@
 // Data structure for a node in heap
 struct heapNode {
   int vertex; 
-  int value; 
+  long long value; 
 };
 
 // Data structure for min heap
@@ -30,7 +30,7 @@ void printHeap(struct minHeap* h) {
 }
 
 // Create min heap node
-struct heapNode* createMinNode (int v, int val) {
+struct heapNode* createMinNode (int v, long long val) {
   struct heapNode* node = malloc(sizeof(struct heapNode)); 
   node->vertex = v; 
   node->value = val; 
@@ -101,7 +101,7 @@ struct heapNode* heapDeleteMin(struct minHeap* h) {
   return min; 
 }
 
-void heapUpdate(struct minHeap* h, int val) {
+void heapUpdate(struct minHeap* h, long long val) {
   h->array[0]->value = val; 
   minHeapify(h, 0); 
 } 
@@ -110,12 +110,3 @@ int isHeapEmpty(struct minHeap* h) {
   return (h->size == 0); 
 }
 
-// Check if node is in mst
-int heapNotInTree(int *s, int i) {
-  if (s[i] == 1) {
-    return 0;
-  }
-  else {
-    return 1;
-  }
-}
