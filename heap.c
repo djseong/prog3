@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <math.h> 
 
+
 // Data structure for a node in heap
 struct heapNode {
   int vertex; 
@@ -16,6 +17,14 @@ struct minHeap {
   int capacity;
   struct heapNode **array; 
 };
+
+void freeHeap(struct minHeap* h) {
+  int i;
+  for (i = 0; i < h->capacity; i++) {
+    free(h->array[i]);
+  } 
+  free(h->array); 
+}
 
 // Debugging function to print heap
 void printHeap(struct minHeap* h) {
