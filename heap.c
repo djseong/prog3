@@ -47,7 +47,7 @@ struct minHeap* createMinHeap(int capacity) {
 }
 
 // Put first vertex into heap
-void initializeMinHeap(struct minHeap* h, int* input, int size) {
+void initializeMinHeap(struct minHeap* h, long long* input, int size) {
   int i; 
   for (i = 0; i < size; i++) {
     h->array[i] = createMinNode(i, input[i]); 

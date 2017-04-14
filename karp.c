@@ -5,17 +5,17 @@
 #include "heap.c" 
 
 // read input file and store numbers into nums
-int* readFile(char* filename, int d) {
+long long* readFile(char* filename, int d) {
   FILE* f; 
   f = fopen(filename, "r"); 
   if (f == NULL) {
     printf("error opening file\n"); 
     exit(-1); 
   }
-  int* nums = malloc(sizeof(int) * d); 
+  long long* nums = malloc(sizeof(long long) * d); 
   int i;
   for (i = 0; i < d; i++) {
-    fscanf(f, "%d\n", &nums[i]); 
+    fscanf(f, "%lli\n", &nums[i]); 
   }
   fclose(f); 
   return nums; 
@@ -32,13 +32,23 @@ void writeFile(int d, char* filename) {
   long long num; 
   int i; 
   for (i = 0; i<d; i++) {
-    num = rand() % 1000000000000; 
+    //num = rand() % 1000000000000; 
+    num = rand() % 10; 
     fprintf(f, "%lli\n", num); 
   }
   fclose(f); 
 }
 
-int karp(struct minHeap* heap, int size) {
+int* randomSol(int n) {
+  int* num = malloc(sizeof(int) * n); 
+  int i; 
+  for (i = 0; i < n; i++) {
+    num[i] = rand() % n; 
+  }
+  return num; 
+}
+
+long long karp(struct minHeap* heap, int size) {
   while (heap->size > 1) {
     struct heapNode* firstMax = heapDeleteMin(heap); 
     int newMax = firstMax->value - heap->array[0]->value; 
@@ -50,18 +60,29 @@ int karp(struct minHeap* heap, int size) {
 
 int main() {
   srand(time(NULL));
-  int size = 100;
+  int size = 5;
   writeFile(size, "input2.txt");
-  int* input = readFile("input2.txt", size); 
+  long long* input = readFile("input2.txt", size); 
+  int* partition = randomSol(size); 
+  long long* newinput = calloc(1, sizeof(long long) * size); 
   int i; 
+  printf("old input:\n"); 
+  for (i = 0; i < size; i++)
+    printf("%lli\n", input[i]);
   for (i = 0; i<size; i++){
-    printf("%d\n", input[i]); 
+     newinput[partition[i]] += input[i]; 
   }
+  printf("partition: \n"); 
+  for (i = 0; i < size; i++)
+    printf("%d\n", partition[i]); 
+  printf("new input:\n"); 
+  for (i = 0; i < size; i++)
+    printf("%lli\n", newinput[i]);
   struct minHeap* heap = createMinHeap(size);
-  initializeMinHeap(heap, input, size); 
+  initializeMinHeap(heap, newinput, size); 
   buildHeap(heap, size);
   printf("built:\n"); 
   printHeap(heap); 
   printf("running karp:\n"); 
-  printf("result: %d\n", karp(heap, size)); 
+  printf("result: %lli\n", karp(heap, size)); 
 }
