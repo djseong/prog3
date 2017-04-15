@@ -37,6 +37,7 @@ void freeHeap(struct minHeap* h) {
     free(h->array[i]);
   } 
   free(h->array); 
+  free(h);
 }
 
 // Create min heap node
@@ -53,21 +54,24 @@ struct minHeap* createMinHeap(int capacity) {
   heap->size = 0;
   heap->capacity = capacity; 
   heap->array = (struct heapNode**) malloc(sizeof(struct heapNode*) * capacity); 
+  int i;
+  for (i = 0; i < heap->capacity; i++) {
+    heap->array[i] = createMinNode(i, 0); 
+  }
   return heap; 
 }
 
-// Put first vertex into heap
+// initialize values in heap
 void initializeMinHeap(struct minHeap* h, long long* input, int size) {
   int i; 
-  h->size = 0;
+  h->size = size;
   for (i = 0; i < size; i++) {
-    if (h->array[i]) {
-      free(h->array[i]);
-    }
-    printf("hello\n");
-    h->array[i] = createMinNode(i, input[i]); 
-    h->size++; 
+    //printf("hello\n");
+    h->array[i]->vertex = i; 
+    h->array[i]->value = input[i]; 
   }
+  // printf("Initial: \n");
+  // printHeap(h);
 }
   
 // Swap two nodes in heap
@@ -111,6 +115,7 @@ struct heapNode* heapDeleteMin(struct minHeap* h) {
   struct heapNode* min = h->array[0]; 
   struct heapNode* last = h->array[h->size - 1]; 
   h->array[0] = last;
+  h->array[h->size - 1] = min; 
   h->size--; 
   minHeapify(h, 0); 
   return min; 

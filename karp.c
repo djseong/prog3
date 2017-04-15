@@ -73,9 +73,9 @@ long long karp(struct minHeap* heap, int size) {
   buildHeap(heap, size);
   while (heap->size > 1) {
     struct heapNode* firstMax = heapDeleteMin(heap); 
-    int newMax = firstMax->value - heap->array[0]->value; 
+    long long newMax = firstMax->value - heap->array[0]->value; 
     heapUpdate(heap, newMax); 
-    // printHeap(heap);
+    //printHeap(heap);
   }
   return heap->array[0]->value; 
 }
