@@ -32,8 +32,8 @@ void writeFile(int d, char* filename) {
   long long num; 
   int i; 
   for (i = 0; i<d; i++) {
-    //num = rand() % 1000000000000; 
-    num = rand() % 10; 
+    num = rand() % 1000000000000; 
+    // num = rand() % 10; 
     fprintf(f, "%lli\n", num); 
   }
   fclose(f); 
