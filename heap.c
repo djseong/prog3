@@ -7,7 +7,7 @@
 // Data structure for a node in heap
 struct heapNode {
   int vertex; 
-  long long value; 
+  unsigned long long value; 
 };
 
 // Data structure for min heap
@@ -22,10 +22,10 @@ struct minHeap {
 void printHeap(struct minHeap* h) {
   int i; 
   int s = h->size; 
-  int p; 
+  unsigned long long p; 
   for (i = 0; i < s; i++) {
     p = h->array[i]->value; 
-    printf("vertex %d value %d\n", h->array[i]->vertex, p); 
+    printf("vertex %d value %llu\n", h->array[i]->vertex, p); 
   }
   printf("size: %d\n", h->size); 
 }
@@ -41,7 +41,7 @@ void freeHeap(struct minHeap* h) {
 }
 
 // Create min heap node
-struct heapNode* createMinNode (int v, long long val) {
+struct heapNode* createMinNode (int v, unsigned long long val) {
   struct heapNode* node = malloc(sizeof(struct heapNode)); 
   node->vertex = v; 
   node->value = val; 
@@ -62,7 +62,7 @@ struct minHeap* createMinHeap(int capacity) {
 }
 
 // initialize values in heap
-void initializeMinHeap(struct minHeap* h, long long* input, int size) {
+void initializeMinHeap(struct minHeap* h, unsigned long long* input, int size) {
   int i; 
   h->size = size;
   for (i = 0; i < size; i++) {
@@ -121,7 +121,7 @@ struct heapNode* heapDeleteMin(struct minHeap* h) {
   return min; 
 }
 
-void heapUpdate(struct minHeap* h, long long val) {
+void heapUpdate(struct minHeap* h, unsigned long long val) {
   h->array[0]->value = val; 
   minHeapify(h, 0); 
 } 
