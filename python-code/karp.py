@@ -24,12 +24,13 @@ def writeFile(filename, size):
 
 
 def randomMove(lst, size):
+	result = list(lst)
 	i = random.randint(0, size - 1)
 	j = random.randint(0, size - 1)
 
-	if (lst[i] != j):
-		lst[i] = j
-	return lst
+	if (result[i] != j):
+		result[i] = j
+	return result
 
 def randomSol(size):
 	nums = []
@@ -38,6 +39,8 @@ def randomSol(size):
 	return nums
 
 def randomMove2(lst, size):
+	result = list(lst)
+	
 	i = random.randint(0, size - 1)
 	j = random.randint(0, size - 1)
 
@@ -45,12 +48,12 @@ def randomMove2(lst, size):
 		j = random.randint(0, size - 1)
 
 	if random.random() < .5:
-		lst[i] = -lst[i]
+		result[i] = -1 * result[i]
 
 	if random.random() < .5:
-		lst[j] = -lst[j]
+		result[j] = -1 * result[j]
 
-	return lst
+	return result
 
 
 def randomSol2(size):
@@ -61,7 +64,7 @@ def randomSol2(size):
 	return nums
 
 def karp2(original_lst, solution, size):
-	residue =  0
+	residue = 0
 
 	for i in range(size):
 		residue += solution[i] * original_lst[i]
@@ -70,13 +73,14 @@ def karp2(original_lst, solution, size):
 
 
 def karp(nums, size):
-	nums.sort(reverse=True)
+	result = list(nums)
+	result.sort(reverse=True)
 	count = size
 	while (count > 1):
-		new_val = nums[0] - nums[1]
-		nums[0] = new_val
-		nums[1] = 0
-		nums.sort(reverse=True)
+		new_val = result[0] - result[1]
+		result[0] = new_val
+		result[1] = 0
+		result.sort(reverse=True)
 		count -= 1
-	return nums[0]
+	return result[0]
 
