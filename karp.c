@@ -48,26 +48,19 @@ int* randomSol(int n) {
   return num; 
 }
 
-void swapArray(int* array, int i, int j) {
-  int temp = array[i];
-  array[i] = array[j];
-  array[j] = temp;
-}
 
 // randomly choose two indices i and j and swap those positions in P array
 int* randomMove(int* array_P, int size) {
   int random_index1 = rand() % size;
 
   int random_index2 = rand() % size;
-  while (random_index2 == random_index1) {
-    random_index2 = rand() % size;
+  
+
+  if (array_P[random_index1] != random_index2) {
+    array_P[random_index1] = random_index2;
   }
 
-  int* swapped_elements = malloc(sizeof(int) * 2);
-  swapped_elements[0] = random_index1;
-  swapped_elements[1] = random_index2;
-  swapArray(array_P, random_index1, random_index2);
-  return swapped_elements;
+  return array_P;
 }
 
 // Function to Merge Arrays L and R into A. 

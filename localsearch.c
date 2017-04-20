@@ -7,7 +7,7 @@
 
 void newInput(unsigned long long* newinput, int size, int* solution, unsigned long long* array_A) {
   int j; 
-
+ 
   // clear new input
   for (j = 0; j<size; j++){
       newinput[j] = 0; 
@@ -38,67 +38,30 @@ int* hillClimbingLocalSearch(unsigned long long* array_A, int* random_solution, 
 	struct minHeap* heap = createMinHeap(size);
   // get prior residue
   newInput(newinput, size, random_solution, array_A); 
-  initializeMinHeap(heap, newinput, size); 
-  unsigned long long prior_residue = karp(heap, size);
-
+  unsigned long long prior_residue = karp2(newinput, size);
 
 	int i;
 	for (i = 0; i < max_iteration; i++) {
-		int* swapped_elements = randomMove(random_solution, size);
-		newInput(newinput, size, random_solution, array_A); 
+    int* new_random_solution = copyRandomSolution(random_solution, size);
+    new_random_solution = randomMove(new_random_solution, size);
+
+		newInput(newinput, size, new_random_solution, array_A); 
     
-		initializeMinHeap(heap, newinput, size); 
-		unsigned long long new_residue = karp(heap, size);
+		unsigned long long new_residue = karp2(newinput, size);
 		if (new_residue < prior_residue) {
 			prior_residue = new_residue;
-      printf("test2 %llu\n", prior_residue);
-    }
-    else
-      swapArray(random_solution, swapped_elements[0], swapped_elements[1]);
-
-    free(swapped_elements);
-	}
-
-	freeHeap(heap);
-	free(newinput);
-
-	return random_solution;
-}
-
-int* repeatedRandomLocalSearch(unsigned long long* array_A, int* random_solution, int size, int max_iteration) {
-
-  // logic to create A' list
-  unsigned long long* newinput = calloc(1, sizeof(unsigned long long) * size); 
-  struct minHeap* heap = createMinHeap(size);
-  // get prior residue
-  newInput(newinput, size, random_solution, array_A); 
-  initializeMinHeap(heap, newinput, size); 
-  unsigned long long prior_residue = karp(heap, size);  
-
-  int i;
-  for (i = 0; i < max_iteration; i++) {
-    int* new_random_solution = randomSol(size);
-    newInput(newinput, size, new_random_solution, array_A); 
-    
-    initializeMinHeap(heap, newinput, size); 
-    unsigned long long new_residue = karp(heap, size);
-    if (new_residue < prior_residue) {
       int* temp = random_solution;
       random_solution = new_random_solution;
       free(temp);
-      prior_residue = new_residue;
-      printf("test1 %llu\n", prior_residue);
-    } 
-    else {
-      free(new_random_solution);
     }
-      
-  }
+    else
+      free(new_random_solution);
 
-  freeHeap(heap);
-  free(newinput);
+	}
 
-  return random_solution;
+	free(newinput);
+
+	return random_solution;
 }
 
 int* simulatedAnnealingLocalSearch(unsigned long long* array_A, int* random_solution, int size, int max_iteration) {
@@ -118,23 +81,28 @@ int* simulatedAnnealingLocalSearch(unsigned long long* array_A, int* random_solu
 
   int i;
   for (i = 0; i < max_iteration; i++) {
-    int* swapped_elements = randomMove(random_solution, size);
-    newInput(newinput, size, random_solution, array_A); 
+    int* new_random_solution = copyRandomSolution(random_solution, size);
+    new_random_solution = randomMove(new_random_solution, size);
+
+    newInput(newinput, size, new_random_solution, array_A); 
 
     initializeMinHeap(heap, newinput, size); 
     unsigned long long new_residue = karp(heap, size);
     if (new_residue < prior_residue) {
       prior_residue = new_residue;
-      printf("test3 moved to better neighbor %llu\n", prior_residue);
+      int* temp = random_solution;
+      random_solution = new_random_solution;
+      free(temp);
 
     }
     else if ((rand() / (double)RAND_MAX) < exp(-(new_residue - prior_residue)/t_iteration(i))) {
       prior_residue = new_residue;
-      printf("test3 random move %llu\n", prior_residue);
-
+      int* temp = random_solution; 
+      random_solution = new_random_solution;
+      free(temp);
     } 
     else {
-      swapArray(random_solution, swapped_elements[0], swapped_elements[1]);
+      free(new_random_solution);
     }
 
     if (prior_residue < original_residue) {
@@ -143,7 +111,6 @@ int* simulatedAnnealingLocalSearch(unsigned long long* array_A, int* random_solu
       original_residue = prior_residue;
     } 
 
-    free(swapped_elements);
   }
 
   free(random_solution);
@@ -153,43 +120,86 @@ int* simulatedAnnealingLocalSearch(unsigned long long* array_A, int* random_solu
 }
 
 
+int* repeatedRandomLocalSearch(unsigned long long* array_A, int* random_solution, int size, int max_iteration) {
+
+  // logic to create A' list
+  unsigned long long* newinput = calloc(1, sizeof(unsigned long long) * size); 
+  struct minHeap* heap = createMinHeap(size);
+  // get prior residue
+  newInput(newinput, size, random_solution, array_A); 
+  unsigned long long prior_residue = karp2(newinput, size);
+
+  int i;
+  for (i = 0; i < max_iteration; i++) {
+    int* new_random_solution = randomSol(size);
+    newInput(newinput, size, new_random_solution, array_A); 
+    
+    unsigned long long new_residue = karp2(newinput, size);
+    if (new_residue < prior_residue) {
+      int* temp = random_solution;
+      random_solution = new_random_solution;
+      free(temp);
+      prior_residue = new_residue;
+      // printf("test1 %llu\n", prior_residue);
+    } 
+    else {
+      free(new_random_solution);
+    }
+      
+  }
+
+  free(newinput);
+
+  return random_solution;
+}
+
+
 int main() {
 	srand(time(NULL));
   int size = 100;
-  writeFile(size, "input2.txt");
+  // writeFile(size, "input2.txt");
   unsigned long long* input = readFile("input2.txt", size); 
   struct minHeap* heap = createMinHeap(size);
   unsigned long long* newinput = calloc(1, sizeof(unsigned long long) * size); 
   int* random_solution = randomSol(size);
+  int* random_solution2 = randomSol(size);
+
 
   // repeated random test 1
-  int* solution1 = repeatedRandomLocalSearch(input, copyRandomSolution(random_solution, size), size, 10);
+  int* solution1 = repeatedRandomLocalSearch(input, random_solution, size, 25000);
   newInput(newinput, size, solution1, input);
   initializeMinHeap(heap, newinput, size); 
 
   unsigned long long final_residue = karp(heap, size);
-  unsigned long long final_residue2 = karp2(newinput, size);
+  // unsigned long long final_residue2 = karp2(newinput, size);
 
   printf("Repeated Random Search: \n");
+
   printf("Solution1: \n"); 
   int j;
+
   for (j = 0; j<size; j++) {
     printf("%d, ", solution1[j]);
   }
   printf("\n");
+  for (j = 0; j<size; j++) {
+    printf("%llu, ", newinput[j]);
+  }
+  printf("\n");
   
   printf("The final residue from repeated random sampling was %llu\n", final_residue);
-  printf("%llu\n", final_residue2);
+  // printf("%llu\n", final_residue2);
   printf("******************************************************************\n");
 
   // hill climbing test 2
-  int* solution2 = hillClimbingLocalSearch(input, copyRandomSolution(random_solution, size), size, 10);
+  int* solution2 = hillClimbingLocalSearch(input, random_solution2, size, 25000);
 
   newInput(newinput, size, solution2, input);
   initializeMinHeap(heap, newinput, size); 
 
   final_residue = karp(heap, size);
-  final_residue2 = karp2(newinput, size);
+
+  // final_residue2 = karp2(newinput, size);
 
   printf("Hill Climbing Search: \n");
   printf("Solution2: \n"); 
@@ -197,29 +207,34 @@ int main() {
     printf("%d, ", solution2[j]);
   }
   printf("\n");
-  
-  printf("The final residue from hill climbing was %llu\n", final_residue);
-  printf("%llu\n", final_residue2);
-  printf("******************************************************************\n");
 
-  // Simulated Annealing test 3
-  int* solution3 = simulatedAnnealingLocalSearch(input, copyRandomSolution(random_solution, size), size, 10);
-
-  newInput(newinput, size, solution3, input);
-  initializeMinHeap(heap, newinput, size); 
-
-  final_residue = karp(heap, size);
-  final_residue2 = karp2(newinput, size);
-  printf("Simulated Annealing Search: \n");
-  printf("Solution3: \n"); 
   for (j = 0; j<size; j++) {
-    printf("%d, ", solution3[j]);
+    printf("%llu, ", newinput[j]);
   }
   printf("\n");
   
-  printf("The final residue from simulated annealing was %llu\n", final_residue);
-  printf("%llu\n", final_residue2);
+  printf("The final residue from hill climbing was %llu\n", final_residue);
+  // printf("%llu\n", final_residue2);
   printf("******************************************************************\n");
+
+  // Simulated Annealing test 3
+  // int* solution3 = simulatedAnnealingLocalSearch(input, copyRandomSolution(random_solution, size), size, 10);
+
+  // newInput(newinput, size, solution3, input);
+  // initializeMinHeap(heap, newinput, size); 
+
+  // final_residue = karp(heap, size);
+  // final_residue2 = karp2(newinput, size);
+  // printf("Simulated Annealing Search: \n");
+  // printf("Solution3: \n"); 
+  // for (j = 0; j<size; j++) {
+  //   printf("%d, ", solution3[j]);
+  // }
+  // printf("\n");
+  
+  // printf("The final residue from simulated annealing was %llu\n", final_residue);
+  // printf("%llu\n", final_residue2);
+  // printf("******************************************************************\n");
 
   initializeMinHeap(heap, input, size); 
   printf("Normal karp: \n"); 
@@ -229,7 +244,7 @@ int main() {
   free(newinput);
   free(solution1);
   free(solution2); 
-  free(solution3);
+  // free(solution3);
   freeHeap(heap);
 
 }
